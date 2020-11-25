@@ -9,4 +9,5 @@ import Foundation
 
 struct Constants {
     static let SERVER_URL = "https://landing-sandbox.foodvisor.io/itw"
+    static let TOKEN = "Bearer iwn-31@!3pf(w]pmarewj236^in" // should be stored in keychain in real use case
 }

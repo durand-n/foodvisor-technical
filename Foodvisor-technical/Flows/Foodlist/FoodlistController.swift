@@ -21,6 +21,12 @@ class FoodlistController: UIViewController, FoodlistView {
         tableView.registerCellClass(FoodlistCell.self)
         tableView.dataSource = self
         tableView.delegate = self
+        tableView.separatorColor = .clear
+        tableView.separatorStyle = .none
+        tableView.estimatedRowHeight = 232.0
+        tableView.rowHeight = UITableView.automaticDimension
+        
+        title = "Recettes"
         self.viewModel.onShowData = {
             self.tableView.reloadData()
         }
@@ -47,7 +53,11 @@ extension FoodlistController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withClass: FoodlistCell.self)
+        if let data = viewModel.getDatafor(row: indexPath.row) {
+            cell.setContent(data: data)
+        }
         
+//        cell.layer.insertSublayer(gradient(frame: cell.bounds), at: 0)
         return cell
     }
     

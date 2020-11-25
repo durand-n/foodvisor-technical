@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Alamofire
 
 enum FoodvisorApiRoutes {
     case FoodList
@@ -25,52 +26,38 @@ protocol FoodvisorApi {
 }
 
 class FoodvisorApiImp: FoodvisorApi {
-    func getFoodList(completion: @escaping ([FoodvisorApiModel.Food]?, Error?) -> Void) {
-        
-        var semaphore = DispatchSemaphore (value: 0)
-
-        var request = URLRequest(url: URL(string: "https://landing-sandbox.foodvisor.io/itw/food/list/?foo=bar")!,timeoutInterval: Double.infinity)
-        request.addValue("Bearer iwn-31@!3pf(w]pmarewj236^in", forHTTPHeaderField: "Authorization")
-
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
-          guard let data = data else {
-            print(String(describing: error))
-            semaphore.signal()
-            return
-          }
-          print(String(data: data, encoding: .utf8)!)
-          semaphore.signal()
+    
+    func sendHeaderInRedirection(_ session: URLSessionTask, _ request: URLRequest, _ response: HTTPURLResponse) -> URLRequest? {
+        if request.url?.host == "landing-sandbox.foodvisor.io" {
+            var newRequest = request
+            newRequest.setValue(Constants.TOKEN, forHTTPHeaderField: "Authorization")
+            return newRequest
+        } else {
+            return request
         }
-
-        task.resume()
-        semaphore.wait()
-
-//        if let url = URL(string: "https://landing-sandbox.foodvisor.io/itw/food/list/?foo=bar") {
-//
-//            var request = URLRequest(url: url)
-//            request.addValue("Bearer iwn-31@!3pf(w]pmarewj236^in", forHTTPHeaderField: "Authorization")
-//            request.httpMethod = "GET"
-//            URLSession.shared.dataTask(with: request) { data, response, error in
-//                if let data = data {
-//                    if let jsonString = String(data: data, encoding: .utf8) {
-//                       print(jsonString)
-//                    }
-//                    do {
-//                        let decoder = JSONDecoder()
-//                        decoder.dateDecodingStrategy = .iso8601
-//                        decoder.keyDecodingStrategy = .convertFromSnakeCase
-//                        let items = try decoder.decode([FoodvisorApiModel.Food].self, from: data)
-//                        print(items)
-//                        completion(items, error)
-//                    } catch let error {
-//                        completion(nil, error)
-//                    }
-//                } else {
-//                    completion(nil, error)
-//                }
-//           }.resume()
-//        } else {
-//            completion(nil, nil)
-//        }
+    }
+    
+    func getFoodList(completion: @escaping ([FoodvisorApiModel.Food]?, Error?) -> Void) {
+        let redirector = Redirector(behavior: Redirector.Behavior.modify(sendHeaderInRedirection(_:_:_:)))
+        
+        if let url = URL(string: FoodvisorApiRoutes.FoodList.path + "?foo=bar") {
+            let headers: HTTPHeaders = ["Authorization": Constants.TOKEN]
+            AF.request(url, method: .get, parameters: nil, headers: headers).redirect(using: redirector).responseString(encoding: String.Encoding.utf8) { response in
+                switch response.result {
+                case let .success(value):
+                    do {
+                        let decoder = JSONDecoder()
+                        decoder.dateDecodingStrategy = .iso8601
+                        decoder.keyDecodingStrategy = .convertFromSnakeCase
+                        let items = try decoder.decode([FoodvisorApiModel.Food].self, from: value.data(using: .utf8)!)
+                        completion(items, nil)
+                    } catch let error {
+                        completion(nil, error)
+                    }
+                case let .failure(error):
+                    completion(nil, error)
+                }
+            }
+        }
     }
 }

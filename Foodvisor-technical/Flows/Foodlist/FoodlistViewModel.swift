@@ -53,12 +53,14 @@ class FoodlistViewModel: FoodlistViewModelType {
     }
     
     func getDatafor(row: Int) -> FoodDataRepresentable? {
-        return FoodDataRepresentable(name: "blaaaa", picture: "")
+        guard row < foods.count else { return nil }
+        let food = foods[row]
+        return FoodDataRepresentable(name: food.displayName, pictureUrl: URL(string: food.thumbnail))
     }
 }
 
 struct FoodDataRepresentable {
     var name: String
-    var picture: String
+    var pictureUrl: URL?
     
 }
