@@ -8,10 +8,14 @@
 import UIKit
 
 protocol FoodlistView: BaseView {
+    var onEdit: ((_ food: Food, _ at: Int) -> Void)? { get set }
     
+    func didEdit(row: Int)
 }
 
 class FoodlistController: UIViewController, FoodlistView {
+    var onEdit: ((Food, Int) -> Void)?
+    
     private var viewModel: FoodlistViewModelType
     private var tableView = UITableView()
     
@@ -56,10 +60,35 @@ extension FoodlistController: UITableViewDelegate, UITableViewDataSource {
         if let data = viewModel.getDatafor(row: indexPath.row) {
             cell.setContent(data: data)
         }
-        
-//        cell.layer.insertSublayer(gradient(frame: cell.bounds), at: 0)
         return cell
     }
     
+    func didEdit(row: Int) {
+        tableView.reloadRows(at: [IndexPath(row: row, section: 0)], with: .automatic)
+        viewModel.saveEdit()
+    }
     
+    func tableView(_ tableView: UITableView,
+      contextMenuConfigurationForRowAt indexPath: IndexPath,
+      point: CGPoint) -> UIContextMenuConfiguration? {
+
+        let edit = UIAction(title: "Modifier",
+          image: UIImage(systemName: "pencil")) { action in
+            if let food = self.viewModel.getFood(row: indexPath.row) {
+                self.onEdit?(food, indexPath.row)
+            }
+        }
+
+        let delete = UIAction(title: "Supprimer",
+          image: UIImage(systemName: "trash.fill"),
+          attributes: [.destructive]) { action in
+            self.viewModel.removeAt(row: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .automatic)
+         }
+
+      return UIContextMenuConfiguration(identifier: nil,
+        previewProvider: nil) { _ in
+        UIMenu(title: "Actions", children: [edit, delete])
+      }
+    }
 }

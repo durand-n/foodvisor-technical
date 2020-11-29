@@ -16,6 +16,8 @@
 		140C11F8256D6B46003DA8CF /* FoodDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 140C11F7256D6B46003DA8CF /* FoodDataManager.swift */; };
 		140C11FD256D6C64003DA8CF /* Misc.swift in Sources */ = {isa = PBXBuildFile; fileRef = 140C11FC256D6C64003DA8CF /* Misc.swift */; };
 		140C1205256DC6F3003DA8CF /* FoodlistCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 140C1204256DC6F3003DA8CF /* FoodlistCell.swift */; };
+		1439C7A0257303CA00A27920 /* FoodItemEditController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1439C79F257303CA00A27920 /* FoodItemEditController.swift */; };
+		1439C7A625730B6900A27920 /* FoodItemEditViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1439C7A525730B6900A27920 /* FoodItemEditViewModel.swift */; };
 		148D4B4D256C6A530091BCF3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 148D4B4C256C6A530091BCF3 /* AppDelegate.swift */; };
 		148D4B50256C6A530091BCF3 /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 148D4B4F256C6A530091BCF3 /* AppCoordinator.swift */; };
 		148D4B54256C6A530091BCF3 /* CoordinatorFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 148D4B53256C6A530091BCF3 /* CoordinatorFactory.swift */; };
@@ -75,6 +77,8 @@
 		140C11F7256D6B46003DA8CF /* FoodDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodDataManager.swift; sourceTree = "<group>"; };
 		140C11FC256D6C64003DA8CF /* Misc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Misc.swift; sourceTree = "<group>"; };
 		140C1204256DC6F3003DA8CF /* FoodlistCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodlistCell.swift; sourceTree = "<group>"; };
+		1439C79F257303CA00A27920 /* FoodItemEditController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodItemEditController.swift; sourceTree = "<group>"; };
+		1439C7A525730B6900A27920 /* FoodItemEditViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodItemEditViewModel.swift; sourceTree = "<group>"; };
 		148D4B49256C6A530091BCF3 /* Foodvisor-technical.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Foodvisor-technical.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		148D4B4C256C6A530091BCF3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		148D4B4F256C6A530091BCF3 /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
@@ -163,6 +167,15 @@
 				140C11E9256D6A3A003DA8CF /* Food+CoreDataProperties.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		1439C7A425730B5300A27920 /* FoodItemEdit */ = {
+			isa = PBXGroup;
+			children = (
+				1439C79F257303CA00A27920 /* FoodItemEditController.swift */,
+				1439C7A525730B6900A27920 /* FoodItemEditViewModel.swift */,
+			);
+			path = FoodItemEdit;
 			sourceTree = "<group>";
 		};
 		148D4B40256C6A530091BCF3 = {
@@ -306,6 +319,7 @@
 		148D4BB5256C79110091BCF3 /* Foodlist */ = {
 			isa = PBXGroup;
 			children = (
+				1439C7A425730B5300A27920 /* FoodItemEdit */,
 				148D4BB6256C79250091BCF3 /* FoodlistCoordinator.swift */,
 				140C11D9256D5FF4003DA8CF /* FoodlistController.swift */,
 				140C11DE256D65CC003DA8CF /* FoodlistViewModel.swift */,
@@ -598,9 +612,11 @@
 				148D4B5E256C6A530091BCF3 /* Base.swift in Sources */,
 				148D4B74256C6A530091BCF3 /* UIView.swift in Sources */,
 				140C11D5256D564B003DA8CF /* FoodvisorApiModel.swift in Sources */,
+				1439C7A0257303CA00A27920 /* FoodItemEditController.swift in Sources */,
 				148D4B72256C6A530091BCF3 /* UITableView.swift in Sources */,
 				140C11EB256D6A3A003DA8CF /* Food+CoreDataProperties.swift in Sources */,
 				148D4B4D256C6A530091BCF3 /* AppDelegate.swift in Sources */,
+				1439C7A625730B6900A27920 /* FoodItemEditViewModel.swift in Sources */,
 				140C11EA256D6A3A003DA8CF /* Food+CoreDataClass.swift in Sources */,
 				148D4B7B256C6A530091BCF3 /* Foodvisor_technical.xcdatamodeld in Sources */,
 				148D4B6A256C6A530091BCF3 /* UIButton.swift in Sources */,

@@ -13,32 +13,32 @@ protocol FoodlistViewModelType {
     var onShowData: (() -> Void)? { get set }
     var foodCount: Int { get }
     func getDatafor(row: Int) -> FoodDataRepresentable?
+    func getFood(row: Int) -> Food?
+    func removeAt(row: Int)
+    func saveEdit()
     func initFoodlist()
 }
 
 class FoodlistViewModel: FoodlistViewModelType {
+    
     // MARK: - Protocol compliance
     var onShowError: ((String) -> Void)?
     var onShowData: (() -> Void)?
     
     // MARK: - Private properties
-    private var foods: [Food]
     private var dataManager: DataManagerProtocol
     
     // MARK: - initialization
     init(dataManager: DataManagerProtocol) {
-        self.foods = []
         self.dataManager = dataManager
     }
     
     func initFoodlist() {
         if let foods = dataManager.foods, !foods.isEmpty {
-            self.foods = foods
             self.onShowData?()
         } else {
-            dataManager.getFoodlist { (items, error) in
-                if let items = items {
-                    self.foods = items
+            dataManager.getFoodlist { (error) in
+                if error != nil {
                     self.onShowData?()
                 } else {
                     self.onShowError?(error?.localizedDescription ?? "une erreur est survenue")
@@ -49,13 +49,29 @@ class FoodlistViewModel: FoodlistViewModelType {
     
     // MARK: - Controller related methods/properties
     var foodCount: Int {
-        return foods.count
+        return dataManager.foods?.count ?? 0
     }
     
     func getDatafor(row: Int) -> FoodDataRepresentable? {
-        guard row < foods.count else { return nil }
-        let food = foods[row]
+        guard row < foodCount, let food = dataManager.foods?[row] else { return nil }
         return FoodDataRepresentable(name: food.displayName, pictureUrl: URL(string: food.thumbnail))
+    }
+    
+    func getFood(row: Int) -> Food? {
+        guard row < foodCount, let food = dataManager.foods?[row] else { return nil }
+        return food
+    }
+    
+    func removeAt(row: Int) {
+        guard row < foodCount else { return }
+        
+        print(dataManager.foods?.count)
+        dataManager.removeAt(row)
+        print(dataManager.foods?.count)
+    }
+    
+    func saveEdit() {
+        self.dataManager.saveModifications()
     }
 }
 

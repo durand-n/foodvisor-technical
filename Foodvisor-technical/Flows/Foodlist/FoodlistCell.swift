@@ -12,7 +12,6 @@ class FoodlistCell: UITableViewCell {
     private var nameLabel = UILabel(title: "", type: .bold, color: .white, size: 22, lines: 0, alignment: .left)
     private var foodImageView = UIImageView(image: nil, contentMode: .scaleAspectFill)
     private var caloriesLabel = UILabel(title: "210 Kcal", type: .regular, color: .text, size: 16, lines: 1, alignment: .left)
-    private var actionButton = UIButton(illu: UIImage(systemName: "ellipsis") ?? UIImage(), contentMode: .scaleAspectFit, tintColor: .white)
     let gradientLayer = CAGradientLayer()
     
     
@@ -24,7 +23,7 @@ class FoodlistCell: UITableViewCell {
         selectionStyle = .none
         foodImageView.clipsToBounds = true
         contentView.addSubview(card)
-        card.addSubviews([foodImageView, nameLabel, actionButton, caloriesLabel])
+        card.addSubviews([foodImageView, nameLabel, caloriesLabel])
         
         card.setConstraints([
             card.heightAnchor.constraint(equalToConstant: 200),
@@ -39,13 +38,6 @@ class FoodlistCell: UITableViewCell {
             foodImageView.rightAnchor.constraint(equalTo: card.rightAnchor),
             foodImageView.topAnchor.constraint(equalTo: card.topAnchor),
             foodImageView.bottomAnchor.constraint(equalTo: card.bottomAnchor, constant: -60)
-        ])
-        
-        actionButton.setConstraints([
-            actionButton.rightAnchor.constraint(equalTo: foodImageView.rightAnchor, constant: -8),
-            actionButton.heightAnchor.constraint(equalToConstant: 40),
-            actionButton.widthAnchor.constraint(equalToConstant: 40),
-            actionButton.topAnchor.constraint(equalTo: foodImageView.topAnchor, constant: 8)
         ])
         
         nameLabel.setConstraints([
@@ -64,7 +56,6 @@ class FoodlistCell: UITableViewCell {
         foodImageView.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMinXMinYCorner]
         
         card.addShadow(offset: CGSize(width: 0, height: 5), color: .black, opacity: 0.2, radius: 5)
-        actionButton.addShadow(offset: CGSize(width: 0, height: 5), color: .black, opacity: 0.2, radius: 5)
     }
     
     required init?(coder: NSCoder) {

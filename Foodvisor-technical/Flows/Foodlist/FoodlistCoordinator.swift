@@ -24,7 +24,17 @@ class FoodlistCoordinator: BaseCoordinator {
     
     func showFoodlist() {
         let module = factory.makeFoodlistController(viewModel: FoodlistViewModel(dataManager: dataManager))
+        module.onEdit = { [weak self] food, index in
+            let edit: FoodItemEditView = FoodItemEditController(viewModel: FoodItemEditViewModel(item: food))
+            
+            edit.onSave = {
+                module.didEdit(row: index)
+                self?.router.dismissModule()
+            }
+            self?.router.present(edit)
+        }
         
         self.router.push(module)
     }
+    
 }

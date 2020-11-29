@@ -76,6 +76,7 @@ class FoodDataManager {
     }
     
     /// DELETE
+    
     public func drop() throws {
         try Food.deleteAll(context: self.context)
     }
