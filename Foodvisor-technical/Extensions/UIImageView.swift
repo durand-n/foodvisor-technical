@@ -14,21 +14,32 @@ extension UIImageView {
         self.contentMode = cm
     }
     
-    func load(url: URL) {
-        DispatchQueue.global().async { [weak self] in
-            if let data = try? Data(contentsOf: url) {
-                if let image = UIImage(data: data) {
-                    DispatchQueue.main.async {
-                        self?.image = image
-                        self?.alpha = 1.0
-                        self?.contentMode = .scaleAspectFit
-                    }
-                } else {
-                    self?.setPlaceholder()
-                }
-            } else {
-                self?.setPlaceholder()
+    @discardableResult func load(fileName: String) -> Bool {
+        if let dir = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false), let image = UIImage(contentsOfFile: URL(fileURLWithPath: dir.absoluteString).appendingPathComponent(fileName).path) {
+            DispatchQueue.main.async() { [weak self] in
+                self?.image = image
             }
+            return true
+        } else {
+            return false
+        }
+    }
+    
+    func load(url: URL) {
+        // Check if image is already downloaded
+        if !load(fileName: url.fileName) {
+            URLSession.shared.dataTask(with: url, completionHandler: { data, response, error in
+                guard let data = data, let filename = response?.suggestedFilename, error == nil else { return }
+                guard let directory = try? FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false) as NSURL else { return }
+                    do {
+                        try data.write(to: directory.appendingPathComponent(filename)!)
+                    } catch {
+                        return
+                    }
+                DispatchQueue.main.async() { [weak self] in
+                    self?.image = UIImage(data: data)
+                }
+            }).resume()
         }
     }
     

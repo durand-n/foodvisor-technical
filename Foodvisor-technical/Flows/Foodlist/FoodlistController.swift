@@ -22,6 +22,7 @@ class FoodlistController: UIViewController, FoodlistView {
     init(viewModel: FoodlistViewModelType) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
+        tableView.backgroundColor = .white
         tableView.registerCellClass(FoodlistCell.self)
         tableView.dataSource = self
         tableView.delegate = self

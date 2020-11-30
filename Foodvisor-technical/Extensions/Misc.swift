@@ -14,3 +14,15 @@ extension NSManagedObject {
         try context.save()
     }
 }
+
+extension Double {
+    func halfRound() -> Double {
+        return (self * 2).rounded() / 2
+    }
+}
+
+extension URL {
+    var fileName: String {
+        return self.lastPathComponent
+    }
+}

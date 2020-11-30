@@ -30,10 +30,10 @@ class FoodDataManager {
         let food = Food(context: self.context)
         
         food.calories = Int32(remoteFood.calories)
-        food.carbs = remoteFood.carbs
-        food.fat = remoteFood.fat
-        food.fibers = remoteFood.fibers
-        food.proteins = remoteFood.proteins
+        food.carbs = remoteFood.carbs.halfRound()
+        food.fat = remoteFood.fat.halfRound()
+        food.fibers = remoteFood.fibers.halfRound()
+        food.proteins = remoteFood.proteins.halfRound()
         food.thumbnail = remoteFood.thumbnail
         food.type = remoteFood.type
         food.displayName = remoteFood.displayName
@@ -49,10 +49,10 @@ class FoodDataManager {
             let food = Food(context: self.context)
 
             food.calories = Int32(remoteFood.calories)
-            food.carbs = remoteFood.carbs
-            food.fat = remoteFood.fat
-            food.fibers = remoteFood.fibers
-            food.proteins = remoteFood.proteins
+            food.carbs = remoteFood.carbs.halfRound()
+            food.fat = remoteFood.fat.halfRound()
+            food.fibers = remoteFood.fibers.halfRound()
+            food.proteins = remoteFood.proteins.halfRound()
             food.thumbnail = remoteFood.thumbnail
             food.type = remoteFood.type
             food.displayName = remoteFood.displayName

@@ -85,5 +85,27 @@ extension UIView {
         self.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate(constraints)
     }
+    
+    open func setVerticalConstraints(aboveView: UIView, spacing: CGFloat, left: CGFloat, right: CGFloat, bottom: Bool = false, bottomMargin: CGFloat? = nil, height: CGFloat? = nil) {
+        guard let superview = self.superview else { return }
+        var constraints = [
+            self.topAnchor.constraint(equalTo: superview == aboveView ? superview.topAnchor : aboveView.bottomAnchor, constant: spacing),
+            self.leftAnchor.constraint(equalTo: superview.leftAnchor, constant: left),
+            self.rightAnchor.constraint(equalTo: superview.rightAnchor, constant: right),
+        ]
+        if bottom {
+            constraints.append(self.bottomAnchor.constraint(equalTo: superview.bottomAnchor, constant: bottomMargin ?? spacing))
+        }
+        
+        if let height = height {
+            constraints.append(self.heightAnchor.constraint(equalToConstant: height))
+        }
+        
+        self.setConstraints(constraints)
+    }
+    
+    open func setVerticalConstraints(aboveView: UIView, spacing: CGFloat, margins: CGFloat, bottom: Bool = false, height: CGFloat? = nil) {
+        setVerticalConstraints(aboveView: aboveView, spacing: spacing, left: margins, right: -1 * margins , bottom: bottom, bottomMargin: spacing, height: height)
+    }
 }
 

@@ -20,6 +20,8 @@ class FoodlistCell: UITableViewCell {
         let card = UIView(backgroundColor: .white)
         card.cornerRadius = 12
         
+        overrideUserInterfaceStyle = .light
+        backgroundColor = .white
         selectionStyle = .none
         foodImageView.clipsToBounds = true
         contentView.addSubview(card)
@@ -65,7 +67,9 @@ class FoodlistCell: UITableViewCell {
     func setContent(data: FoodDataRepresentable) {
         nameLabel.text = data.name
         if let url = data.pictureUrl {
-            foodImageView.af.setImage(withURL: url, cacheKey: data.pictureUrl?.absoluteString, completion: nil)
+            foodImageView.load(url: url)
+        } else if let name = data.pictureName {
+            foodImageView.load(fileName: name)
         }
     }
     
