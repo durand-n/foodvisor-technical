@@ -5,7 +5,7 @@
 //  Created by Benoît Durand on 28/11/2020.
 //
 
-import Foundation
+import UIKit
 
 enum FoodType: String, CaseIterable {
     case dish
@@ -21,17 +21,27 @@ protocol FoodItemEditViewModelType {
     var carbs: String { get }
     var fibers: String { get }
     var proteins: String { get }
-    var thumbnail: String { get }
+    var thumbnail: URL? { get }
+    var fileName: String? { get }
     var typeIndex: Int { get }
     var typeList: [String] { get }
 
     func setData(name: String)
+    func setImage(image: UIImage)
 }
 
 class FoodItemEditViewModel: FoodItemEditViewModelType {
-    
+
+        
     func setData(name: String) {
         food.displayName = name
+    }
+    
+    func setImage(image: UIImage) {
+        let id = UUID().uuidString
+        saveImage(image: image, to: id)
+        food.fileName = id
+        food.thumbnail = nil
     }
     
     private var food: Food
@@ -64,8 +74,12 @@ class FoodItemEditViewModel: FoodItemEditViewModelType {
         return "\(food.carbs)"
     }
     
-    var thumbnail: String {
-        return food.thumbnail
+    var thumbnail: URL? {
+        return URL(string: food.thumbnail ?? "")
+    }
+    
+    var fileName: String? {
+        return food.fileName
     }
     
     var typeIndex: Int {

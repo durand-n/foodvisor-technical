@@ -6,11 +6,12 @@
         <attribute name="displayName" attributeType="String"/>
         <attribute name="fat" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="fibers" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="fileName" optional="YES" attributeType="String"/>
         <attribute name="proteins" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
-        <attribute name="thumbnail" attributeType="String"/>
+        <attribute name="thumbnail" optional="YES" attributeType="String"/>
         <attribute name="type" attributeType="String"/>
     </entity>
     <elements>
-        <element name="Food" positionX="-63" positionY="-18" width="128" height="163"/>
+        <element name="Food" positionX="-63" positionY="-18" width="128" height="178"/>
     </elements>
 </model>

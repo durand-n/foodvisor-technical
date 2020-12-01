@@ -39,9 +39,9 @@ class FoodlistViewModel: FoodlistViewModelType {
         } else {
             dataManager.getFoodlist { (error) in
                 if error != nil {
-                    self.onShowData?()
-                } else {
                     self.onShowError?(error?.localizedDescription ?? "une erreur est survenue")
+                } else {
+                    self.onShowData?()
                 }
             }
         }
@@ -54,8 +54,7 @@ class FoodlistViewModel: FoodlistViewModelType {
     
     func getDatafor(row: Int) -> FoodDataRepresentable? {
         guard row < foodCount, let food = dataManager.foods?[row] else { return nil }
-        let url = URL(string: food.thumbnail)
-        return FoodDataRepresentable(name: food.displayName, pictureName: url?.fileName, pictureUrl: url)
+        return FoodDataRepresentable(name: food.displayName, pictureName: food.fileName, pictureUrl: URL(string: food.thumbnail ?? ""))
     }
     
     func getFood(row: Int) -> Food? {
@@ -66,9 +65,7 @@ class FoodlistViewModel: FoodlistViewModelType {
     func removeAt(row: Int) {
         guard row < foodCount else { return }
         
-        print(dataManager.foods?.count)
         dataManager.removeAt(row)
-        print(dataManager.foods?.count)
     }
     
     func saveEdit() {

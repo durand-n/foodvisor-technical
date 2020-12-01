@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 class FoodlistCoordinator: BaseCoordinator {
     private let factory: FoodlistModuleFactory
@@ -22,14 +23,29 @@ class FoodlistCoordinator: BaseCoordinator {
         showFoodlist()
     }
     
+    func showImagePicker(on: BaseView,completion: @escaping (_ image: UIImage?) -> Void) {
+
+    }
+    
     func showFoodlist() {
         let module = factory.makeFoodlistController(viewModel: FoodlistViewModel(dataManager: dataManager))
+        let picker = ImagePickerHandler(sourceType: .photoLibrary)
+        
         module.onEdit = { [weak self] food, index in
-            let edit: FoodItemEditView = FoodItemEditController(viewModel: FoodItemEditViewModel(item: food))
+            let editVm = FoodItemEditViewModel(item: food)
+            let edit: FoodItemEditView = FoodItemEditController(viewModel: editVm)
             
             edit.onSave = {
                 module.didEdit(row: index)
                 self?.router.dismissModule()
+            }
+            
+            edit.onPresentImagePicker = { completion in
+                picker.didSelect = { image in
+                    completion(image)
+                    Constants.pickerController.dismiss(animated: true, completion: nil)
+                }
+                edit.toPresent()?.present(Constants.pickerController, animated: true, completion: nil)
             }
             self?.router.present(edit)
         }

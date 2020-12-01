@@ -11,9 +11,14 @@ import UIKit
 
 protocol FoodItemEditView: BaseView {
     var onSave: (() -> Void)? { get set }
+    
+    var onPresentImagePicker: ((@escaping (UIImage?) -> Void) -> Void)? { get set }
 }
 
 class FoodItemEditController: UIViewController, FoodItemEditView {
+    
+    
+    
     private var viewModel: FoodItemEditViewModelType
     private var pictureView = UIImageView()
     private var nameField = UITextField(placeholder: "nom")
@@ -26,6 +31,7 @@ class FoodItemEditController: UIViewController, FoodItemEditView {
     
     
     var onSave: (() -> Void)?
+    var onPresentImagePicker: ((@escaping (UIImage?) -> Void) -> Void)?
     
     init(viewModel: FoodItemEditViewModelType) {
         self.viewModel = viewModel
@@ -50,8 +56,10 @@ class FoodItemEditController: UIViewController, FoodItemEditView {
     
         overrideUserInterfaceStyle = .light
         
-        if let url = URL(string: viewModel.thumbnail) {
-            pictureView.af.setImage(withURL: url)
+        if let url = viewModel.thumbnail {
+            pictureView.load(url: url)
+        } else if let name = viewModel.fileName {
+            pictureView.load(fileName: name)
         }
         pictureView.cornerRadius = 8
         
@@ -82,6 +90,7 @@ class FoodItemEditController: UIViewController, FoodItemEditView {
         typeControl.selectedSegmentIndex = viewModel.typeIndex
         
         saveButton.addTarget(self, action: #selector(savePushed), for: .touchUpInside)
+        pictureButton.addTarget(self, action: #selector(showLibrary), for: .touchUpInside)
         
         view.addSubview(contentView)
         contentView.addSubviews([pictureView, pictureButton, nameField, nameLabel, caloriesLabel, caloriesField, carbsField, carbsLabel, fatField, fatLabel, fibersField, fibersLabel, proteinsField, proteinsLabel, typeControl, saveButton])
@@ -133,5 +142,14 @@ class FoodItemEditController: UIViewController, FoodItemEditView {
     @objc func savePushed() {
         viewModel.setData(name: nameField.text ?? "")
         self.onSave?()
+    }
+    
+    @objc func showLibrary() {
+        self.onPresentImagePicker?() { [weak self] image in
+            if let image = image {
+                self?.pictureView.image = image
+                self?.viewModel.setImage(image: image)
+            }
+        }
     }
 }
