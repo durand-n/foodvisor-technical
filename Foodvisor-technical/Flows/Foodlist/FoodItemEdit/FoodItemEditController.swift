@@ -20,6 +20,7 @@ class FoodItemEditController: UIViewController, FoodItemEditView {
     
     
     private var viewModel: FoodItemEditViewModelType
+    private let contentView = UIView(backgroundColor: .white)
     private var pictureView = UIImageView()
     private var nameField = UITextField(placeholder: "nom")
     private var caloriesField = UITextField(placeholder: "calories")
@@ -27,6 +28,7 @@ class FoodItemEditController: UIViewController, FoodItemEditView {
     private var fatField = UITextField(placeholder: "fat")
     private var fibersField = UITextField(placeholder: "fibers")
     private var proteinsField = UITextField(placeholder: "proteins")
+    private var errorLabel = UILabel(title: "Le nom et les calories sont obligatoires", type: .medium, color: .urgent, size: 14, lines: 0, alignment: .center)
     private var typeControl = UISegmentedControl()
     
     
@@ -44,15 +46,10 @@ class FoodItemEditController: UIViewController, FoodItemEditView {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        let contentView = UIView(backgroundColor: .white)
         let saveButton = UIButton(title: "Sauvegarder", font: .regular, fontSize: 16, textColor: .white, backgroundColor: .primary)
+        let quitButton = UIButton(illu: UIImage(systemName: "xmark") ?? UIImage(), contentMode: .scaleAspectFit, tintColor: .secondary)
         let pictureButton = UIButton(title: "Choisir une photo", font: .regular, textColor: .secondary)
-        let nameLabel = UILabel(title: "plat", type: .regular, color: .label, size: 11, lines: 1, alignment: .left)
-        let caloriesLabel = UILabel(title: "calories", type: .regular, color: .label, size: 11, lines: 1, alignment: .left)
-        let carbsLabel = UILabel(title: "carbs", type: .regular, color: .label, size: 11, lines: 1, alignment: .left)
-        let fatLabel = UILabel(title: "graisse", type: .regular, color: .label, size: 11, lines: 1, alignment: .left)
-        let fibersLabel = UILabel(title: "fibres", type: .regular, color: .label, size: 11, lines: 1, alignment: .left)
-        let proteinsLabel = UILabel(title: "protéines", type: .regular, color: .label, size: 11, lines: 1, alignment: .left)
+
     
         overrideUserInterfaceStyle = .light
         
@@ -61,40 +58,24 @@ class FoodItemEditController: UIViewController, FoodItemEditView {
         } else if let name = viewModel.fileName {
             pictureView.load(fileName: name)
         }
+        pictureView.contentMode = .scaleAspectFit
         pictureView.cornerRadius = 8
-        
-        nameField.text = viewModel.name
-        nameField.borderStyle = .roundedRect
-        
-        caloriesField.text = viewModel.calories
-        caloriesField.borderStyle = .roundedRect
-        caloriesField.keyboardType = .numberPad
-        
-        carbsField.text = viewModel.carbs
-        carbsField.keyboardType = .decimalPad
-        carbsField.borderStyle = .roundedRect
-        
-        fatField.text = viewModel.fat
-        fatField.borderStyle = .roundedRect
-        fatField.keyboardType = .decimalPad
-        
-        fibersField.text = viewModel.fibers
-        fibersField.borderStyle = .roundedRect
-        fibersField.keyboardType = .decimalPad
-        
-        proteinsField.text = viewModel.proteins
-        proteinsField.borderStyle = .roundedRect
-        proteinsField.keyboardType = .decimalPad
         
         typeControl = UISegmentedControl(items: viewModel.typeList)
         typeControl.selectedSegmentIndex = viewModel.typeIndex
         
         saveButton.addTarget(self, action: #selector(savePushed), for: .touchUpInside)
         pictureButton.addTarget(self, action: #selector(showLibrary), for: .touchUpInside)
+        quitButton.addTarget(self, action: #selector(quitPushed), for: .touchUpInside)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
         
         view.addSubview(contentView)
-        contentView.addSubviews([pictureView, pictureButton, nameField, nameLabel, caloriesLabel, caloriesField, carbsField, carbsLabel, fatField, fatLabel, fibersField, fibersLabel, proteinsField, proteinsLabel, typeControl, saveButton])
+        contentView.addSubviews([pictureView, pictureButton, typeControl, saveButton, quitButton, errorLabel])
         contentView.cornerRadius = 12
+        errorLabel.fadeOut(withDuration: 0)
+        
+        designFields()
         
         contentView.setConstraints([
             contentView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
@@ -115,6 +96,63 @@ class FoodItemEditController: UIViewController, FoodItemEditView {
             pictureButton.centerYAnchor.constraint(equalTo: pictureView.centerYAnchor)
         ])
         
+        
+        quitButton.setConstraints([
+            quitButton.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -16),
+            quitButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
+        ])
+        
+        errorLabel.setVerticalConstraints(aboveView: typeControl, spacing: 8, margins: 16)
+        
+        saveButton.setConstraints([
+            saveButton.topAnchor.constraint(equalTo: typeControl.bottomAnchor, constant: 30),
+            saveButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16),
+            saveButton.heightAnchor.constraint(equalToConstant: 40),
+            saveButton.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -16),
+            saveButton.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16)
+        ])
+        saveButton.cornerRadius = 8
+    }
+    
+    func designFields() {
+        let nameLabel = UILabel(title: "plat", type: .regular, color: .label, size: 11, lines: 1, alignment: .left)
+        let caloriesLabel = UILabel(title: "calories", type: .regular, color: .label, size: 11, lines: 1, alignment: .left)
+        let carbsLabel = UILabel(title: "carbs", type: .regular, color: .label, size: 11, lines: 1, alignment: .left)
+        let fatLabel = UILabel(title: "graisse", type: .regular, color: .label, size: 11, lines: 1, alignment: .left)
+        let fibersLabel = UILabel(title: "fibres", type: .regular, color: .label, size: 11, lines: 1, alignment: .left)
+        let proteinsLabel = UILabel(title: "protéines", type: .regular, color: .label, size: 11, lines: 1, alignment: .left)
+        
+        contentView.addSubviews([nameField, nameLabel, caloriesLabel, caloriesField, carbsField, carbsLabel, fatField, fatLabel, fibersField, fibersLabel, proteinsField, proteinsLabel])
+        
+        nameField.text = viewModel.name
+        nameField.borderStyle = .roundedRect
+        nameField.addDoneButtonOnKeyboard()
+        
+        caloriesField.text = viewModel.calories
+        caloriesField.borderStyle = .roundedRect
+        caloriesField.keyboardType = .numberPad
+        caloriesField.addDoneButtonOnKeyboard()
+        
+        carbsField.text = viewModel.carbs
+        carbsField.keyboardType = .decimalPad
+        carbsField.borderStyle = .roundedRect
+        carbsField.addDoneButtonOnKeyboard()
+        
+        fatField.text = viewModel.fat
+        fatField.borderStyle = .roundedRect
+        fatField.keyboardType = .decimalPad
+        fatField.addDoneButtonOnKeyboard()
+        
+        fibersField.text = viewModel.fibers
+        fibersField.borderStyle = .roundedRect
+        fibersField.keyboardType = .decimalPad
+        fibersField.addDoneButtonOnKeyboard()
+        
+        proteinsField.text = viewModel.proteins
+        proteinsField.borderStyle = .roundedRect
+        proteinsField.keyboardType = .decimalPad
+        proteinsField.addDoneButtonOnKeyboard()
+        
         nameLabel.setVerticalConstraints(aboveView: pictureView, spacing: 16, left: 24, right: 16)
         nameField.setVerticalConstraints(aboveView: nameLabel, spacing: 2, margins: 16, height: 30)
         caloriesLabel.setVerticalConstraints(aboveView: nameField, spacing: 8, left: 24, right: 16)
@@ -128,20 +166,16 @@ class FoodItemEditController: UIViewController, FoodItemEditView {
         proteinsLabel.setVerticalConstraints(aboveView: fibersField, spacing: 8, left: 24, right: 16)
         proteinsField.setVerticalConstraints(aboveView: proteinsLabel, spacing: 2, margins: 16, height: 30)
         typeControl.setVerticalConstraints(aboveView: proteinsField, spacing: 8, margins: 16)
-        
-        saveButton.setConstraints([
-            saveButton.topAnchor.constraint(equalTo: typeControl.bottomAnchor, constant: 30),
-            saveButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16),
-            saveButton.heightAnchor.constraint(equalToConstant: 40),
-            saveButton.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -16),
-            saveButton.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16)
-        ])
-        saveButton.cornerRadius = 8
     }
+
     
     @objc func savePushed() {
-        viewModel.setData(name: nameField.text ?? "")
-        self.onSave?()
+        if viewModel.setData(name: nameField.text ?? "", calories: caloriesField.text ?? "", carbs: carbsField.text ?? "", fat: fatField.text ?? "", fibers: fibersField.text ?? "", proteins: proteinsField.text ?? "", type: typeControl.selectedSegmentIndex) {
+            errorLabel.fadeOut()
+            self.onSave?()
+        } else {
+            errorLabel.fadeIn()
+        }
     }
     
     @objc func showLibrary() {
@@ -152,4 +186,28 @@ class FoodItemEditController: UIViewController, FoodItemEditView {
             }
         }
     }
+    
+    @objc func quitPushed() {
+        self.dismiss(animated: true, completion: nil)
+    }
+    
+    @objc func keyboardWillShow(notification: NSNotification) {
+        guard !nameField.isFirstResponder && !caloriesField.isFirstResponder else { return }
+        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
+            if self.view.frame.origin.y == 0 {
+                self.view.frame.origin.y -= keyboardSize.height - 100
+            }
+        }
+    }
+
+    @objc func keyboardWillHide(notification: NSNotification) {
+        if self.view.frame.origin.y != 0 {
+            self.view.frame.origin.y = 0
+        }
+    }
+    
+    @objc func dismissMyKeyboard() {
+          view.endEditing(true)
+      }
+    
 }

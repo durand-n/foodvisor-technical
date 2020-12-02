@@ -21,9 +21,10 @@ public class ApplicationCoordinator: BaseCoordinator {
     }
 
     override public func start() {
-        let foodlistCoordinator = coordinatorFactory.makeFoodlistCoordinator(router: router, factory: moduleFactory, dataManager: dataManager)
-        addChild(foodlistCoordinator)
-        foodlistCoordinator.start()
+        let tabBarCoordinator = coordinatorFactory.makeTabBarCoordinator(coordinatorFactory: coordinatorFactory, router: router)
+        addChild(tabBarCoordinator)
+
+        tabBarCoordinator.start()
     }
 
 }

@@ -26,7 +26,7 @@ class FoodDataManager {
 
     
     /// CREATE
-    func insertOne(_ remoteFood: FoodvisorApiModel.Food) throws {
+    func createOne(_ remoteFood: FoodvisorApiModel.Food) throws {
         let food = Food(context: self.context)
         
         food.calories = Int32(remoteFood.calories)
@@ -44,7 +44,7 @@ class FoodDataManager {
     }
     
     // CREATE BATCH
-    func insertMany(_ remoteFoods: [FoodvisorApiModel.Food]) throws -> [Food]? {
+    func createMany(_ remoteFoods: [FoodvisorApiModel.Food]) throws -> [Food]? {
         remoteFoods.forEach { remoteFood in
             let food = Food(context: self.context)
 
@@ -63,6 +63,17 @@ class FoodDataManager {
         try self.context.save()
 
         return self.foods?.suffix(remoteFoods.count)
+    }
+    
+    func createFood() -> Food? {
+        let food = Food(context: self.context)
+        return food
+    }
+    
+    func insert(_ food: Food) throws {
+        self.context.insert(food)
+        self.foods?.append(food)
+        try self.context.save()
     }
     
     /// READ

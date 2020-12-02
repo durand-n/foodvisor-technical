@@ -11,3 +11,7 @@ import Foundation
 protocol FoodlistModuleFactory {
     func makeFoodlistController(viewModel: FoodlistViewModelType) -> FoodlistView
 }
+
+protocol FoodGeneratorModuleFactory {
+    func makeFoodGenerator(viewModel: GeneratorViewModelType) -> GeneratorView
+}

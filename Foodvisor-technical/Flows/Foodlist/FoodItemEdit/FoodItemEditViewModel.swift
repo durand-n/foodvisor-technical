@@ -10,8 +10,20 @@ import UIKit
 enum FoodType: String, CaseIterable {
     case dish
     case starter
-    case desert
-    
+    case dessert
+}
+
+extension FoodType {
+    var displayName: String {
+        switch self {
+        case .dish:
+            return "Plat"
+        case .starter:
+            return "Entrée"
+        case .dessert:
+            return "Dessert"
+        }
+    }
 }
 
 protocol FoodItemEditViewModelType {
@@ -26,15 +38,36 @@ protocol FoodItemEditViewModelType {
     var typeIndex: Int { get }
     var typeList: [String] { get }
 
-    func setData(name: String)
+    func setData(name: String, calories: String, carbs: String, fat: String, fibers: String, proteins: String, type: Int) -> Bool
     func setImage(image: UIImage)
 }
 
 class FoodItemEditViewModel: FoodItemEditViewModelType {
 
         
-    func setData(name: String) {
+    func setData(name: String, calories: String, carbs: String, fat: String, fibers: String, proteins: String, type: Int) -> Bool {
+        guard let calories = Int32(calories), !name.isEmpty else { return false }
         food.displayName = name
+        food.calories = calories
+        
+        if let carbs = Double(carbs) {
+            food.carbs = carbs
+        }
+        
+        if let fat = Double(fat) {
+            food.fat = fat
+        }
+        
+        if let fibers = Double(fibers) {
+            food.fibers = fibers
+        }
+        
+        if let proteins = Double(proteins) {
+            food.proteins = proteins
+        }
+        
+        food.type = types[type]
+        return true
     }
     
     func setImage(image: UIImage) {
@@ -82,16 +115,22 @@ class FoodItemEditViewModel: FoodItemEditViewModelType {
         return food.fileName
     }
     
+    var types: [String] {
+        var foodTypes: [String] = []
+        for item in FoodType.allCases {
+            foodTypes.append(item.rawValue)
+        }
+        return foodTypes
+    }
+    
     var typeIndex: Int {
-        let types = typeList
-        
         return types.firstIndex(of: food.type) ?? 0
     }
     
     var typeList: [String] {
         var foodTypes: [String] = []
         for item in FoodType.allCases {
-            foodTypes.append(item.rawValue)
+            foodTypes.append(item.displayName)
         }
         
         return foodTypes

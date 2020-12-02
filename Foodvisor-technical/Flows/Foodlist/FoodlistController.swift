@@ -8,16 +8,18 @@
 import UIKit
 
 protocol FoodlistView: BaseView {
-    var onEdit: ((_ food: Food, _ at: Int) -> Void)? { get set }
+    var onEdit: ((_ food: Food, _ at: Int, _ create: Bool) -> Void)? { get set }
     
     func didEdit(row: Int)
+    func didCreate(food: Food, at: Int)
 }
 
 class FoodlistController: UIViewController, FoodlistView {
-    var onEdit: ((Food, Int) -> Void)?
+    var onEdit: ((_ food: Food, _ at: Int, _ create: Bool) -> Void)?
     
     private var viewModel: FoodlistViewModelType
     private var tableView = UITableView()
+    private var emptyLabel = UILabel(title: "Rien à afficher", type: .semiBold, color: .gray, size: 16, lines: 1, alignment: .center)
     
     init(viewModel: FoodlistViewModelType) {
         self.viewModel = viewModel
@@ -31,9 +33,14 @@ class FoodlistController: UIViewController, FoodlistView {
         tableView.estimatedRowHeight = 232.0
         tableView.rowHeight = UITableView.automaticDimension
         
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .compose, target: self, action: #selector(addTapped))
         title = "Recettes"
-        self.viewModel.onShowData = {
-            self.tableView.reloadData()
+        self.viewModel.onShowData = { [weak self] in
+            self?.tableView.reloadData()
+        }
+        
+        self.viewModel.onShowError = { [weak self] error in
+            self?.showError(message: error)
         }
         viewModel.initFoodlist()
         designView()
@@ -45,15 +52,28 @@ class FoodlistController: UIViewController, FoodlistView {
     
     func designView() {
         view.backgroundColor = .background
-        view.addSubview(tableView)
+        view.addSubviews([tableView, emptyLabel])
         tableView.setConstraintsToSuperview()
+        emptyLabel.setConstraintsToSuperview()
         tableView.backgroundColor = .background
+    }
+    
+    @objc func addTapped() {
+        if let food = self.viewModel.createFood() {
+            self.onEdit?(food, tableView.numberOfRows(inSection: 0), true)
+        }
     }
 }
 
 extension FoodlistController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.foodCount
+        let rowCount = viewModel.foodCount
+        if rowCount == 0 {
+            emptyLabel.fadeIn()
+        } else {
+            emptyLabel.fadeOut()
+        }
+        return rowCount
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -69,6 +89,11 @@ extension FoodlistController: UITableViewDelegate, UITableViewDataSource {
         viewModel.saveEdit()
     }
     
+    func didCreate(food: Food, at: Int) {
+        viewModel.insertFood(food: food)
+        tableView.insertRows(at: [IndexPath(row: at, section: 0)], with: .automatic)
+    }
+    
     func tableView(_ tableView: UITableView,
       contextMenuConfigurationForRowAt indexPath: IndexPath,
       point: CGPoint) -> UIContextMenuConfiguration? {
@@ -76,7 +101,7 @@ extension FoodlistController: UITableViewDelegate, UITableViewDataSource {
         let edit = UIAction(title: "Modifier",
           image: UIImage(systemName: "pencil")) { action in
             if let food = self.viewModel.getFood(row: indexPath.row) {
-                self.onEdit?(food, indexPath.row)
+                self.onEdit?(food, indexPath.row, false)
             }
         }
 

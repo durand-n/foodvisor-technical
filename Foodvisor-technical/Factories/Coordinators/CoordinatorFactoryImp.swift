@@ -10,7 +10,15 @@ import UIKit
 import CoreData
 
 class CoordinatorFactoryImp: CoordinatorFactory {
-    func makeFoodlistCoordinator(router: Router, factory: FoodlistModuleFactory, dataManager: DataManagerProtocol) -> BaseCoordinator {
-        return FoodlistCoordinator(factory: factory, router: router, dataManager: dataManager)
+    func makeGeneratorCoordinator(navigationController: UINavigationController, factory: FoodGeneratorModuleFactory, dataManager: DataManagerProtocol) -> BaseCoordinator {
+        return GeneratorCoordinator(factory: factory, router: RouterImp(rootController: navigationController), dataManager: dataManager)
+    }
+    
+    func makeTabBarCoordinator(coordinatorFactory: CoordinatorFactory, router: Router) -> BaseCoordinator & TabbarProtocol {
+        return TabbarCoordinator(coordinatorFactory: coordinatorFactory, router: router)
+    }
+    
+    func makeFoodlistCoordinator(navigationController: UINavigationController, factory: FoodlistModuleFactory, dataManager: DataManagerProtocol) -> BaseCoordinator {
+        return FoodlistCoordinator(factory: factory, router: RouterImp(rootController: navigationController), dataManager: dataManager)
     }
 }

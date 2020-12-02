@@ -12,7 +12,7 @@ class FoodvisorApiModel {
         let fibers: Double
         let calories: Int
         let displayName: String
-        let thumbnail: String
+        let thumbnail: String?
         let carbs: Double
         let fat: Double
         let type: String

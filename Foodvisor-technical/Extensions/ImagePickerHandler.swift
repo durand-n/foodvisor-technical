@@ -34,7 +34,7 @@ extension ImagePickerHandler: UIImagePickerControllerDelegate {
     }
     
     public func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage, let resized = image.convert(toSize: CGSize(width: 400, height: 400)) {
+        if let image = info[UIImagePickerController.InfoKey.editedImage] as? UIImage, let resized = image.convert(toSize: CGSize(width: 400, height: 400)) {
             didSelect?(resized)
         }
     }

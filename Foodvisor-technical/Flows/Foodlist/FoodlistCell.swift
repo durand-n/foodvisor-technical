@@ -49,7 +49,7 @@ class FoodlistCell: UITableViewCell {
         ])
         
         caloriesLabel.setConstraints([
-            caloriesLabel.leftAnchor.constraint(equalTo: card.leftAnchor, constant: 8),
+            caloriesLabel.leftAnchor.constraint(equalTo: card.leftAnchor, constant: 16),
             caloriesLabel.topAnchor.constraint(equalTo: foodImageView.bottomAnchor, constant: 16),
         ])
         
@@ -71,6 +71,7 @@ class FoodlistCell: UITableViewCell {
         } else if let name = data.pictureName {
             foodImageView.load(fileName: name)
         }
+        caloriesLabel.text = data.calories
     }
     
     override func layoutIfNeeded() {
@@ -79,6 +80,11 @@ class FoodlistCell: UITableViewCell {
         gradientLayer.colors = [UIColor.clear.cgColor,UIColor.black.withAlphaComponent(0.8).cgColor]
         gradientLayer.startPoint = CGPoint(x: 0.5, y: 0.3)
         gradientLayer.endPoint = CGPoint(x: 0.5, y: 1.0)
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        foodImageView.image = nil
     }
 
 }

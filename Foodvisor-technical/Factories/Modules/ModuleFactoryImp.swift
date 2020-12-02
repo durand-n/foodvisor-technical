@@ -15,3 +15,9 @@ extension ModuleFactoryImp: FoodlistModuleFactory {
         return FoodlistController(viewModel: viewModel)
     }
 }
+
+extension ModuleFactoryImp: FoodGeneratorModuleFactory {
+    func makeFoodGenerator(viewModel: GeneratorViewModelType) -> GeneratorView {
+        return GeneratorController(viewModel: viewModel)
+    }
+}

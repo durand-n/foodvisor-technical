@@ -31,12 +31,17 @@ class FoodlistCoordinator: BaseCoordinator {
         let module = factory.makeFoodlistController(viewModel: FoodlistViewModel(dataManager: dataManager))
         let picker = ImagePickerHandler(sourceType: .photoLibrary)
         
-        module.onEdit = { [weak self] food, index in
+        module.onEdit = { [weak self] food, index, isCreate in
             let editVm = FoodItemEditViewModel(item: food)
             let edit: FoodItemEditView = FoodItemEditController(viewModel: editVm)
             
             edit.onSave = {
-                module.didEdit(row: index)
+                if isCreate {
+                    module.didCreate(food: food, at: index)
+                } else {
+                    module.didEdit(row: index)
+                }
+
                 self?.router.dismissModule()
             }
             

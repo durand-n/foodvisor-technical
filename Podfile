@@ -14,8 +14,4 @@ target 'Foodvisor-technical' do
     # Pods for testing
   end
 
-  target 'Foodvisor-technicalUITests' do
-    # Pods for testing
-  end
-
 end

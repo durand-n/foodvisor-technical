@@ -15,12 +15,14 @@ protocol FoodlistViewModelType {
     func getDatafor(row: Int) -> FoodDataRepresentable?
     func getFood(row: Int) -> Food?
     func removeAt(row: Int)
+    func createFood() -> Food?
+    func insertFood(food: Food)
     func saveEdit()
     func initFoodlist()
 }
 
 class FoodlistViewModel: FoodlistViewModelType {
-    
+
     // MARK: - Protocol compliance
     var onShowError: ((String) -> Void)?
     var onShowData: (() -> Void)?
@@ -54,12 +56,20 @@ class FoodlistViewModel: FoodlistViewModelType {
     
     func getDatafor(row: Int) -> FoodDataRepresentable? {
         guard row < foodCount, let food = dataManager.foods?[row] else { return nil }
-        return FoodDataRepresentable(name: food.displayName, pictureName: food.fileName, pictureUrl: URL(string: food.thumbnail ?? ""))
+        return FoodDataRepresentable(food: food)
     }
     
     func getFood(row: Int) -> Food? {
         guard row < foodCount, let food = dataManager.foods?[row] else { return nil }
         return food
+    }
+    
+    func createFood() -> Food? {
+        return dataManager.createFood()
+    }
+    
+    func insertFood(food: Food) {
+        dataManager.insertFood(food)
     }
     
     func removeAt(row: Int) {
@@ -77,5 +87,12 @@ struct FoodDataRepresentable {
     var name: String
     var pictureName: String?
     var pictureUrl: URL?
+    var calories: String
     
+    init(food: Food) {
+        self.name = food.displayName
+        self.pictureUrl = URL(string: food.thumbnail ?? "")
+        self.pictureName = food.fileName
+        self.calories = String(food.calories) + " kcal"
+    }
 }

@@ -11,8 +11,10 @@ import CoreData
 protocol DataManagerProtocol {
     func getFoodlist(completion: @escaping (Error?) -> Void)
     func saveModifications()
-    func removeContacts()
+    func removeFoods()
     func removeAt(_ index: Int)
+    func createFood() -> Food?
+    func insertFood(_ food: Food)
     
     var foods: [Food]? { get }
 }
@@ -60,7 +62,7 @@ class DataManager: DataManagerProtocol {
         api.getFoodList { (items, error) in
             if let items = items {
                 do {
-                    _ = try self.foodManager.insertMany(items)
+                    _ = try self.foodManager.createMany(items)
                     completion(nil)
                 } catch {
                     print("An error occurred while creating foods: \(error)")
@@ -73,7 +75,7 @@ class DataManager: DataManagerProtocol {
     }
     
     // remove every foods in Coredata storage
-    func removeContacts() {
+    func removeFoods() {
         try? self.foodManager.drop()
     }
     
@@ -91,5 +93,13 @@ class DataManager: DataManagerProtocol {
     
     func saveModifications() {
         self.saveContext()
+    }
+    
+    func createFood() -> Food? {
+        return foodManager.createFood()
+    }
+    
+    func insertFood(_ food: Food) {
+        try? self.foodManager.insert(food)
     }
 }
