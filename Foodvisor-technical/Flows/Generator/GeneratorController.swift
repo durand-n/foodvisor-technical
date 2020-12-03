@@ -55,6 +55,8 @@ class GeneratorController: UIViewController, GeneratorView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Controller's actions
+    
     @objc func generate() {
         guard let text = caloriesField.text, !text.isEmpty, let value = Int(text) else {
             self.showError(message: "Vous devez renseigner le champ calories")
@@ -150,12 +152,11 @@ class GeneratorResultsView: UIView {
 class FoodGeneratorCard: UIView {
     private var nameLabel = UILabel(title: "", type: .bold, color: .white, size: 22, lines: 0, alignment: .center)
     private var foodImageView = UIImageView(image: nil, contentMode: .scaleAspectFill)
-    private var caloriesLabel = UILabel(title: "", type: .regular, color: .text, size: 16, lines: 1, alignment: .left)
     private let gradientLayer = CAGradientLayer()
     
     init() {
         super.init(frame: .zero)
-        addSubviews([foodImageView, nameLabel, caloriesLabel])
+        addSubviews([foodImageView, nameLabel])
         foodImageView.setConstraintsToSuperview()
         nameLabel.setConstraintsToSuperview()
         foodImageView.layer.addSublayer(gradientLayer)
